@@ -1,0 +1,201 @@
+@font-face {
+  font-family: NotoSans;
+  src: url("./font/NotoSans-Thin.ttf") format("truetype");
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "NotoSans";
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(122, 92, 250, 1);
+}
+
+.container {
+  background-color: #fff;
+  width: 760px;
+  height: 1200px;
+  border: none;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  margin: 94px 96px;
+}
+
+.form-username {
+  display: flex;
+  flex-direction: column;
+}
+
+.label-username,
+.label-password,
+.label-inputtext {
+  font-weight: bold;
+  color: rgba(102, 102, 102, 1);
+  font-weight: 600;
+  line-height: 18px;
+  font-size: 12px;
+}
+
+.input-username,
+.input-password {
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: rgba(102, 102, 102, 1);
+}
+
+.input-username,
+.input-password::placeholder {
+  padding-left: 20px;
+}
+.form-password {
+  display: flex;
+  flex-direction: column;
+}
+
+.error-password {
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+}
+.form-inputtext {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-inputtext {
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+.label-inputtext {
+  margin-top: 10px;
+}
+
+.input-inputtext::placeholder {
+  padding-left: 20px;
+  color: rgba(51, 51, 51, 1);
+}
+
+.error-inputtext {
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+  color: rgba(235, 87, 87, 1);
+}
+.form-remember {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.label-remember {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.input-remember {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+.form-switch {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.label-switch {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.input-switch {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+.radio-container {
+  margin: 20px 0;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.label-radio {
+  margin-left: 10px;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.input-radio {
+  width: 24px;
+  height: 24px;
+}
+.form-dropdown {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown {
+  border-radius: 8px;
+  height: 56px;
+}
+
+.lable-dropdown {
+  font-weight: bold;
+  color: rgba(102, 102, 102, 1);
+  font-weight: 600;
+  line-height: 18px;
+  font-size: 12px;
+  margin: 10px 0;
+}
+
+.option-dropdown selected {
+  height: 56px;
+}
+
+.form-button {
+  margin-top: 100px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn-cancel {
+  background-color: #fff;
+  width: 172px;
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid rgba(122, 92, 250, 1);
+  color: rgba(122, 92, 250, 1);
+}
+
+.btn-next {
+  background-color: rgba(122, 92, 250, 1);
+  width: 172px;
+  height: 56px;
+  border-radius: 8px;
+  border: 1px solid rgba(122, 92, 250, 1);
+  color: #fff;
+}
