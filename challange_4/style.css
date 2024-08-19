@@ -69,15 +69,6 @@
   background-size: cover;
   object-fit: fill;
   justify-content: space-between;
-  position: relative;
-}
-
-.banner::after {
-  content: "";
-  display: block;
-  height: 100%;
-  position: absolute;
-  width: 100%;
 }
 
 .banner-content {
@@ -151,15 +142,6 @@
   margin-top: 4px;
 }
 
-.content {
-}
-
-.conent-section {
-}
-
-.service-product-list {
-}
-
 .service-product-item {
   border: 1px solid #ccc;
   display: flex;
@@ -212,7 +194,4 @@
 .footer-last {
   height: 75px;
   background: #353535;
-}
-
-.footer-last-left {
 }
