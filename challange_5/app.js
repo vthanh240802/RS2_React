@@ -24,14 +24,13 @@ console.log("Hello");
 
 const array = [3, 2, 5, 4, 3, 1, 5];
 function findSmallestNumber(array) {
+  if (!array || array.length === 0) return;
   let min = array[0];
-  const newArr = [];
   for (let i = 1; i < array.length; i++) {
     if (array[i] < min) {
       min = array[i];
     }
   }
-  //   console.log("new array ", newArr);
   return console.log("Min: ", min);
 }
 
