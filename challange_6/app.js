@@ -82,6 +82,8 @@ function insertPopularItem(products, newProduct) {
     return products;
   }
   const newModelId = newProduct.models.id;
+  // const updateProducts = products.filter((item) => item?.models?.id !== newmodelId)
+  // They the cho doan if phia duoi do thieu dieu kien 
   const updateProducts = products.reduce((prev, item) => {
     if (item !== null && item.models.id === newModelId) {
       return prev;
