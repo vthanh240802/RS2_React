@@ -60,14 +60,14 @@ SortedArray.prototype.get = function (num) {
 console.log("Index Number: ", sortedArr.get(1));
 
 SortedArray.prototype.set = function (num) {
-  const index = this.numbers.findIndex((x) => x > num);
+  const index = this.numbers.findIndex((x) => x >= num);
   if (index === -1) {
     this.numbers.push(num);
   } else {
     this.numbers.splice(index, 0, num);
   }
 };
-sortedArr.set(10);
+sortedArr.set(2);
 console.log(sortedArr.numbers);
 
 SortedArray.prototype.remove = function (num) {
