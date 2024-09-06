@@ -1,107 +1,115 @@
-import { useState, useCallback, useRef } from "react";
+/** @format */
+import { useState, useCallback, useRef, useMemo } from "react";
 import Input from "../components/Input";
+import { validateForm } from "../utils/validation";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
-  const [userName, setUserName] = useState(""); // controlled component
-  const [passWord, setPassWord] = useState("");
-  const [errors, setErrors] = useState<{
-    userName?: string;
-    passWord?: string;
-  }>({});
-  const userNameRef = useRef<HTMLInputElement>(null); // uncontrolled component
-  const passWordRef = useRef<HTMLInputElement>(null);
-  const inputRef = useRef<{ [key: string]: HTMLInputElement | null }>({
-    userName: null,
-    passWord: null,
+  const [username, setUsername] = useState(""); // controlled component
+  const [password, setPassword] = useState(""); // asynchronous  (batch update)
+  const dispatch = useDispatch();
+  const [errorMsgs, setErrorMsg] = useState({
+    username: "",
+    password: "",
   });
-  //   const handleSubmit = useCallback((event: {preventDefault: any})) => {
-  //     console.log("Ref", userNameRef);
+  const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({
+    username: null,
+    password: null,
+  }); // uncontrolled component
+  // const usernameRef = useRef<HTMLInputElement>(null); // uncontrolled component
+  // const passwordRef = useRef<HTMLInputElement>(null);
 
-  //     event.preventDefault();
-  //     // console.log("username: ", userName);
-  //     // console.log("password: ", passWord);
-  //     if (userNameRef.current && passWordRef.current) {
-  //       const username = userNameRef.current.value;
-  //       const password = passWordRef.current.value;
-  //       console.log("username: ", username);
-  //       console.log("password: ", password);
-  //     }
-  //   };
+  const handleSubmit = useCallback((event: { preventDefault: any }) => {
+    console.log("submit ", inputRefs);
+    event.preventDefault();
 
-  const validateForm = () => {
-    const newErrors: { userName?: string; passWord?: string } = {};
-    if (!inputRef.current.userName?.value) {
-      newErrors.userName = "Tên đăng nhập là bắt buộc.";
-    }
-    if (
-      !inputRef.current.passWord?.value ||
-      inputRef.current.passWord.value.length < 8
-    ) {
-      newErrors.passWord = "Mật khẩu là bắt buộc và phải từ 8 ký tự trở lên.";
-    }
-    return newErrors;
-  };
-  const handleSubmit = useCallback(
-    (event: { preventDefault: any }) => {
-      console.log("Ref", userNameRef);
-      console.log("Ref", passWordRef);
-      event.preventDefault();
-      // console.log("username: ", userName);
-      // console.log("password: ", passWord);
-      //   if (userNameRef.current && passWordRef.current) {
-      //     const username = userNameRef.current.value;
-      //     const password = passWordRef.current.value;
-      //     console.log("username: ", username);
-      //     console.log("password: ", password);
-      //   }
-      const validationErrors = validateForm();
-      if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        return;
+    if (inputRefs.current.username && inputRefs.current.password) {
+      const username = inputRefs.current.username.value;
+      const password = inputRefs.current.password.value;
+      console.log("username ", username);
+      console.log("password ", password);
+      const errorMsgs = validateForm(username, password);
+      setErrorMsg(errorMsgs);
+
+      if (!errorMsgs.username && !errorMsgs.password) {
+        // dispatch Action
+        // dispatch(login);
       }
-      if (inputRef.current.userName && inputRef.current.passWord) {
-        const username = inputRef.current.userName.value;
-        const password = inputRef.current.passWord.value;
-        console.log("username: ", username);
-        console.log("password: ", password);
-      }
-      console.log("Input refL:", inputRef);
-    },
-    [userName, passWord]
-  );
+    }
+  }, []); // [] didmount
 
   const handleChangeData = useCallback(
     (value: string, type: string) => {
       if (type === "password") {
-        setPassWord(value);
-      } else setUserName(value);
+        setPassword(value);
+      } else {
+        setUsername(value);
+      }
     },
-    [setPassWord]
+    [setPassword]
   );
+
   return (
-    <form onSubmit={handleSubmit}>
-      <Input
-        ref={(element) => (inputRef.current.userName = element)}
-        label="Username"
-        value={userName}
-        onChange={handleChangeData}
-      />
-      {errors.userName && (
-        <span style={{ color: "red" }}>{errors.userName}</span>
-      )}
-      <Input
-        ref={(element) => (inputRef.current.passWord = element)}
-        label="Password"
-        type="password"
-        value={passWord}
-        onChange={handleChangeData}
-      />
-      {errors.passWord && (
-        <span style={{ color: "red" }}>{errors.passWord}</span>
-      )}
-      <button type="submit">Login</button>
-    </form>
+    <div className="app">
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        style={{
+          margin: "auto",
+          border: "1px solid #c3c3c3",
+          borderRadius: "5px",
+          backgroundColor: "white",
+          width: "400px",
+          padding: "20px",
+        }}
+      >
+        <Input
+          label="Username"
+          value={username}
+          onChange={handleChangeData} // create new arrow function
+          ref={(element) => (inputRefs.current.username = element)}
+          // error={errorMsgs.username}
+          // ref={usernameRef}
+        />
+        <Input
+          label="Password"
+          type="password"
+          value={password}
+          onChange={handleChangeData}
+          // ref={passwordRef}
+          ref={(element) => (inputRefs.current.password = element)}
+          // error={errorMsgs.password}
+        />
+        <Button
+          variant="contained"
+          disableElevation
+          type="submit"
+          style={{ marginTop: "20px" }}
+        >
+          Login
+        </Button>
+        {/* <button type='submit'>Login</button> */}
+      </Box>
+    </div>
   );
 };
 
 export default Login;
+
+// challenge 10:
+/**
+ * Complete the login form
+ * applied useRef form
+ * validate form:
+ * 1. username is required
+ * 2. password is required + length >= 8
+ * Display the errors on the form if any
+ */
+
+// Challenge 11.2
+/**
+ * 1. Apply material UI for Login Form
+ * 2. Handle login behaviors
+ */

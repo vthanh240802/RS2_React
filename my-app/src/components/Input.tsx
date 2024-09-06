@@ -1,29 +1,34 @@
-import { memo, forwardRef } from "react";
+/** @format */
+import { memo, forwardRef, useState } from "react";
+import TextField from "@mui/material/TextField";
+
 type Props = {
   label: string;
   type?: string;
   value?: string;
-  onChange?: (value: string, type: string) => void;
+  onChange?: (value: string, type: string) => void; //
+  error?: string;
 };
-
 const Input = forwardRef<HTMLInputElement, Props>(
-  ({ label, type = "text", value = "", onChange = () => {} }, ref) => {
-    console.log("render", label);
+  (
+    { label, type = "text", value = "", onChange = () => {}, error = "" },
+    ref
+  ) => {
+    const [currentValue, setCurrentValue] = useState(value);
+    console.log("render " + label);
     return (
-      <div>
-        <div>
-          <label htmlFor={label}>{label}</label>
-          <input
-            ref={ref}
-            id={label}
-            type={type}
-            
-            // value={value}
-            // onChange={(event) => onChange(event.target.value, type)}
-          />
-        </div>
-      </div>
+      <TextField
+        label={label}
+        defaultValue={currentValue}
+        onChange={(e) => setCurrentValue(e.target.value)}
+        error={!!error}
+        helperText={error}
+        type={type}
+        style={{ marginTop: "20px", display: "flex", flex: 1 }}
+        inputRef={ref}
+      />
     );
   }
 );
-export default memo(Input);
+
+export default Input; // PureComponent

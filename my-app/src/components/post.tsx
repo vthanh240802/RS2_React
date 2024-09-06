@@ -1,29 +1,36 @@
-// const BASE_URL = "https://jsonplaceholder.typicode.com/";
+/** @format */
+import { memo, useContext } from "react";
+import { Link } from "react-router-dom";
 
-type Props = {
-  id: number;
+interface PostModel {
   title: string;
   body: string;
-  count?: number;
-  onTop: () => void;
+  id: number;
+  userId: number;
+}
+type Props = {
+  // count?: number;
+  postDetail: {
+    post: PostModel;
+    count?: number;
+  };
 };
-const Post = (props: Props) => {
-  console.log("Post redners:", props.title);
 
+const Post = ({ postDetail }: Props) => {
+  console.log("post render ", postDetail.post.id);
   return (
-    <div
-      style={{
-        padding: "10px",
-        border: "1px solid red",
-      }}
-    >
-      <strong>Id: {props.id}</strong>
-      <h2>{props.title}</h2>
-      <p>{props.body}</p>
-      {props.count && <p>{props.count}</p>}
-      <button onClick={props.onTop}>OnTop</button>
+    <div>
+      <Link to={"post/" + postDetail.post.id}>
+        <strong>{postDetail.post.title}</strong>
+      </Link>
+      <p>{postDetail.post.body}</p>
+      {/* {count && <p>{count}</p>} */}
     </div>
   );
 };
 
-export default Post;
+const arePropsEqual = (prevProps: Props, nextProps: Props) => {
+  return prevProps.postDetail.post.title === nextProps.postDetail.post.title;
+};
+
+export default memo(Post, arePropsEqual); // shallow compare

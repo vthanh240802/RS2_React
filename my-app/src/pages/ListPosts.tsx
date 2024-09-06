@@ -1,7 +1,17 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+  useContext,
+} from "react";
 import Post from "../components/post";
-import { log } from "console";
-
+import { PostModel } from "../types/Post";
+import { fetchData } from "../utils/fectData";
+import useApi from "../hooks/useApi";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 const post1 = {
   userId: 1,
   id: 1,
@@ -26,34 +36,76 @@ const post3 = {
 
 const posts = [post1, post2, post3];
 function ListPosts() {
-  const [postsData, setPostsData] = useState(posts);
-  const [count, setcCount] = useState(postsData.length);
-  const addPost = () => {
-    setPostsData((prevPost) => [...prevPost, post1]);
-    console.log(postsData);
-  };
-  const handleOnTop = (id: number) => {
-    const postToMove = postsData.find((post) => post.id === id);
-    if (postToMove) {
-      const updatedPosts = postsData.filter((post) => post.id !== id);
-      setPostsData([postToMove, ...updatedPosts]);
+  // const [postsData, setPostsData] = useState(posts);
+  const { data: postsData = [], setData: setPostsData } = useApi("/posts", []);
+  const [count, setCount] = useState(0);
+  const [time, setTime] = useState(0);
+  const totalTitleLength = useRef<number>(0); // ref
+  const auth = useSelector((state: any) => state.auth);
+
+  // const addPost = () => {
+  //   setPostsData((prevPost) => [...prevPost, post1]);
+  //   console.log(postsData);
+  // };
+  const addPost = useCallback(() => {
+    setPostsData((prevPost: any) => {
+      if (prevPost) {
+        return [...prevPost, post1];
+      }
+      return [post1];
+    });
+    if (totalTitleLength.current != null) {
+      totalTitleLength.current += post1.title.length;
     }
-  };
+  }, []);
+
+  // const handleOnTop = (id: number) => {
+  //   const postToMove = postsData.find((post) => post.id === id);
+  //   if (postToMove) {
+  //     const updatedPosts = postsData.filter((post) => post.id !== id);
+  //     setPostsData([postToMove, ...updatedPosts]);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const fectchListPost = async () => {
+  //     try {
+  //       const listPost = await fetchData("/posts");
+  //       setPostsData(listPost);
+  //     } catch (err) {
+  //       console.error("Error fecthing posts: ", err);
+  //     }
+  //   };
+  //   fectchListPost();
+  // });
+  const handleIncrease = useCallback(() => {
+    // re-render 1 time: batchupdate
+    setCount(count + 1); // count 1: 2
+    // setCount(count + 1);
+    setCount((prevCount) => prevCount + 1); // count 3
+    setTime(time + Date.now());
+  }, [count, time, setCount, setTime]);
+  if (!auth.isLoggedIn) {
+    return <Navigate to="/login" replace={true} />;
+  }
   return (
     <div className="App">
-      <p>Count: {postsData.length}</p>
-      <button onClick={addPost}>Add Post</button>
-      <button onClick={() => setcCount(count + 1)}>Increase</button>
-
-      {postsData.map((post) => (
-        <Post
-          id={post.id}
-          title={post.title}
-          body={post.body}
-          count={postsData.length}
-          onTop={() => handleOnTop(post.id)}
-        />
-      ))}
+      <p>Count: {count}</p>
+      <button onClick={handleIncrease}>Increase</button>
+      {/* <p style={{ color: "green" }}>{total}</p> */}
+      <button onClick={addPost}>Add post</button>
+      {postsData.map((post: PostModel) =>
+        post ? (
+          <Post
+            key={post.id} // 1, 2, 3 1,
+            postDetail={{ post, count: postsData.length }}
+            // title={post.title}
+            // body={post.body}
+            // id={post.id}
+            // count={postsData.length}
+          />
+        ) : null
+      )}
     </div>
   );
 }
