@@ -7,6 +7,7 @@ interface PostModel {
   body: string;
   id: number;
   userId: number;
+  name?: string;
 }
 type Props = {
   // count?: number;
@@ -24,7 +25,7 @@ const Post = ({ postDetail }: Props) => {
         <strong>{postDetail.post.title}</strong>
       </Link>
       <p>{postDetail.post.body}</p>
-      {/* {count && <p>{count}</p>} */}
+      {postDetail.post.name && <i>Author: {postDetail.post.name}</i>}
     </div>
   );
 };

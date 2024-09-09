@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetchData } from "../utils/fectData";
 
 const useApi = (url: string, initiaData?: any) => {
-  const [data, setData] = useState(initiaData);
+  const [data, setData] = useState(initiaData); // internal state 
   useEffect(() => {
     const fectDataDetail = async () => {
       try {

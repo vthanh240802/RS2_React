@@ -1,15 +1,20 @@
 /** @format */
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo, useEffect } from "react";
 import Input from "../components/Input";
 import { validateForm } from "../utils/validation";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { LOGIN } from "../store/action";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState(""); // controlled component
   const [password, setPassword] = useState(""); // asynchronous  (batch update)
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const auth = useSelector((state: any) => state.auth);
+
   const [errorMsgs, setErrorMsg] = useState({
     username: "",
     password: "",
@@ -17,9 +22,14 @@ const Login = () => {
   const inputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({
     username: null,
     password: null,
-  }); // uncontrolled component
-  // const usernameRef = useRef<HTMLInputElement>(null); // uncontrolled component
-  // const passwordRef = useRef<HTMLInputElement>(null);
+  });
+
+  // useEffect(() => {
+  //   // navigate
+  //   if (auth.isLoggedIn) {
+  //     navigate("/");
+  //   }
+  // }, [auth, navigate]);
 
   const handleSubmit = useCallback((event: { preventDefault: any }) => {
     console.log("submit ", inputRefs);
@@ -34,8 +44,14 @@ const Login = () => {
       setErrorMsg(errorMsgs);
 
       if (!errorMsgs.username && !errorMsgs.password) {
-        // dispatch Action
-        // dispatch(login);
+        // dispatch action
+        dispatch({
+          type: LOGIN,
+          username,
+          password,
+        });
+
+        // navigate("/");
       }
     }
   }, []); // [] didmount
@@ -51,6 +67,9 @@ const Login = () => {
     [setPassword]
   );
 
+  if (auth.isLoggedIn) {
+    return <Navigate to="/" replace={true} />;
+  }
   return (
     <div className="app">
       <Box
@@ -70,7 +89,7 @@ const Login = () => {
           value={username}
           onChange={handleChangeData} // create new arrow function
           ref={(element) => (inputRefs.current.username = element)}
-          // error={errorMsgs.username}
+          error={errorMsgs.username}
           // ref={usernameRef}
         />
         <Input
@@ -80,7 +99,7 @@ const Login = () => {
           onChange={handleChangeData}
           // ref={passwordRef}
           ref={(element) => (inputRefs.current.password = element)}
-          // error={errorMsgs.password}
+          error={errorMsgs.password}
         />
         <Button
           variant="contained"
@@ -90,7 +109,6 @@ const Login = () => {
         >
           Login
         </Button>
-        {/* <button type='submit'>Login</button> */}
       </Box>
     </div>
   );
