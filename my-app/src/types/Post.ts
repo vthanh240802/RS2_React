@@ -5,8 +5,17 @@ export interface PostModel {
   body: string;
 }
 
+type Post = PostModel & {
+  name?: string;
+};
+
+export type PostsDataObject = {
+  [key: Post["id"]]: Post;
+};
+
 export type PostsState = {
-  list: Array<PostModel>;
+  ids: Array<Post["id"]>;
+  data: PostsDataObject;
   loading: "idle" | "loading" | "succeed" | "failed";
   error?: string;
 };

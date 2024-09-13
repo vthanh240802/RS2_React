@@ -12,7 +12,8 @@ import { fetchData } from "../utils/fectData";
 import useApi from "../hooks/useApi";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { fectchListPosts } from "../store/reducers/postReducer";
+import { fetchListPosts } from "../store/reducers/postReducer";
+import { fetchListUsers } from "../store/reducers/usersReducer";
 import { AddDispatch } from "../store";
 
 // const post1 = {
@@ -38,6 +39,7 @@ import { AddDispatch } from "../store";
 // };
 
 // const posts = [post1, post2, post3];
+
 function ListPosts() {
   // const [postsData, setPostsData] = useState(posts);
   // const { data: postsData = [], setData: setPostsData } = useApi("/posts", []);
@@ -45,14 +47,17 @@ function ListPosts() {
   const [time, setTime] = useState(0);
   const totalTitleLength = useRef<number>(0); // ref
   const dispatch = useDispatch<AddDispatch>();
-  const { auth, posts } = useSelector((state: any) => state);
-  const postsData = posts.list ?? [];
+  const { auth, posts, users } = useSelector((state: any) => state);
+  const postIds = posts.ids ?? [];
+  const postsData = posts.data || {};
+  const userData = users.data;
   console.log("auth", auth);
   console.log("posts", posts);
 
   useEffect(() => {
-    dispatch(fectchListPosts());
-  }, []);
+    dispatch(fetchListPosts());
+    dispatch(fetchListUsers());
+  }, [dispatch]);
 
   // const addPost = () => {
   //   setPostsData((prevPost) => [...prevPost, post1]);
@@ -106,19 +111,24 @@ function ListPosts() {
     <div className="App">
       <p>Count: {count}</p>
       <button onClick={handleIncrease}>Increase</button>
+      {/* <p style={{ color: 'green' }}>{total}</p> */}
       <button onClick={addPost}>Add post</button>
-      {postsData.map((post: PostModel) =>
-        post ? (
+      {postIds.map((id: PostModel["id"]) => {
+        const post = postsData[id];
+        const postWithUser = post
+          ? { ...post, name: userData[post.userId].name }
+          : null;
+        return postWithUser ? (
           <Post
-            key={post.id} // 1, 2, 3 1,
-            postDetail={{ post, count: postsData.length }}
+            key={postWithUser.id} // 1, 2, 3 1,
+            postDetail={{ post: postWithUser, count: postsData.length }}
             // title={post.title}
             // body={post.body}
             // id={post.id}
             // count={postsData.length}
           />
-        ) : null
-      )}
+        ) : null;
+      })}
     </div>
   );
 }

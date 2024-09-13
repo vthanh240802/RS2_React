@@ -1,49 +1,58 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchData } from "../../utils/fectData";
-import { PostModel, PostsState } from "../../types/Post";
+import { PostModel, PostsDataObject, PostsState } from "../../types/Post";
+import { UserModel } from "../../types/user";
 
-export const fectchListPosts = createAsyncThunk(
-  "posts/fecthListPosts",
+export const fetchListPosts = createAsyncThunk(
+  "posts/fetchListPosts",
   async () => {
     try {
       const postsResponse = await fetchData("posts");
-      const usersResponse = await fetchData("users");
-      console.log("data user", usersResponse);
-
-      const postsWithAuthors = postsResponse.map((post: PostModel) => {
-        const author = usersResponse.find(
-          (user: { id: number }) => user.id === post.userId
-        );
-        return { ...post, name: author?.name || "Unknown" };
-      });
-
-      return postsWithAuthors;
+      return {
+        posts: postsResponse,
+        error: null,
+      };
     } catch (error) {
-      return error;
+      return { error };
     }
   }
 );
 
 const initialState: PostsState = {
-  list: [],
-  loading: "idle", // 'idle', 'loading', 'succeed', 'failed'
+  ids: [],
+  data: {},
+  loading: "idle", // 'idle | 'loading' | 'succeed' | 'failed'
   error: "",
 };
+
 const postsSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fectchListPosts.pending, (state, action) => {
+    builder.addCase(fetchListPosts.pending, (state, action) => {
       state.loading = "loading";
     });
-    builder.addCase(fectchListPosts.fulfilled, (state, action) => {
-      console.log("state @@", state);
-      console.log("action @@", action);
-      state.list = action.payload || [];
+    builder.addCase(fetchListPosts.fulfilled, (state, action) => {
+      const posts = action.payload?.posts || [];
+      if (!posts.length) return;
+      const postObj: PostsDataObject = {};
+      const ids = posts.reduce(
+        (allIds: Array<PostModel["id"]>, post: PostModel) => {
+          if (!state.data[post.id]) {
+            allIds.push(post.id);
+          }
+          postObj[post.id] = post;
+          return allIds;
+        },
+        []
+      );
+      state.data = { ...state.data, ...postObj };
+      state.ids = [...state.ids, ...ids];
+      state.error = action.payload?.error as string;
       state.loading = "succeed";
     });
-    builder.addCase(fectchListPosts.rejected, (state, action) => {
+    builder.addCase(fetchListPosts.rejected, (state, action) => {
       state.loading = "failed";
     });
   },
