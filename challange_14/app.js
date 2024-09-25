@@ -155,6 +155,15 @@ console.log(mergeProducts2(products1, products2));
  * function formatCurrency(amount) {}
  */
 
+function mergeNArrayProducts(listProducts) {
+  // const result = [];
+  // for (let i = 0; i < listProducts.length; i += 2) {
+  //   if (i == listProducts.length - 1) {
+  //     result.push(listProducts[i]);
+  //     break;
+  //   }
+  // }
+}
 function formatCurrency(amount) {
   let result = "";
   let count = 0;

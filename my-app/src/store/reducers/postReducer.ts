@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchData } from "../../utils/fectData";
 import { PostModel, PostsDataObject, PostsState } from "../../types/Post";
 import { UserModel } from "../../types/user";
+import { EDIT_POST } from "../action";
 
 export const fetchListPosts = createAsyncThunk(
   "posts/fetchListPosts",
@@ -55,6 +56,22 @@ const postsSlice = createSlice({
     builder.addCase(fetchListPosts.rejected, (state, action) => {
       state.loading = "failed";
     });
+    // builder.addCase(EDIT_POST, (state, action: {
+    //   type: string,
+    //   changingInput: {
+    //     body:
+    //   }
+    //   postId: number,
+    // }) => {
+
+    //   console.log("action", action);
+    //   if (action.changingInput.body) {
+    //     state.data[action.postId] = {
+    //       ...state.data[action.postId],
+    //       body: state.data[action.postId]["body"],
+    //     };
+    //   }
+    // });
   },
 });
 

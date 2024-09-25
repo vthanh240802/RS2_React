@@ -15,6 +15,7 @@ import { Navigate } from "react-router-dom";
 import { fetchListPosts } from "../store/reducers/postReducer";
 import { fetchListUsers } from "../store/reducers/usersReducer";
 import { AddDispatch } from "../store";
+import post from "../components/post";
 
 // const post1 = {
 //   userId: 1,
@@ -51,6 +52,13 @@ function ListPosts() {
   const postIds = posts.ids ?? [];
   const postsData = posts.data || {};
   const userData = users.data;
+  const [editingPost, setEditingPost] = useState<{
+    postId: null | number;
+    editingField: null | "body" | "author";
+  }>({
+    postId: null,
+    editingField: null,
+  });
   console.log("auth", auth);
   console.log("posts", posts);
 
@@ -101,12 +109,24 @@ function ListPosts() {
     setCount((prevCount) => prevCount + 1); // count 3
     setTime(time + Date.now());
   }, [count, time, setCount, setTime]);
+
+  const handleEdit = useCallback(
+    (post: PostModel, editingField: "body" | "author") => {
+      setEditingPost({
+        postId: post.id,
+        editingField,
+      });
+    },
+    []
+  );
+
   if (!auth.isLoggedIn) {
     return <Navigate to="/login" replace={true} />;
   }
   if (posts.loading === "loading") {
     return <p>loading...</p>;
   }
+
   return (
     <div className="App">
       <p>Count: {count}</p>
@@ -121,11 +141,12 @@ function ListPosts() {
         return postWithUser ? (
           <Post
             key={postWithUser.id} // 1, 2, 3 1,
-            postDetail={{ post: postWithUser, count: postsData.length }}
-            // title={post.title}
-            // body={post.body}
-            // id={post.id}
-            // count={postsData.length}
+            post={postWithUser}
+            handleEdit={handleEdit}
+            editingField={
+              id === editingPost.postId ? editingPost.editingField : null
+            }
+            // postDetail={{ post: postWithUser, count: postsData.length }}
           />
         ) : null;
       })}
