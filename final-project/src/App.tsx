@@ -11,19 +11,26 @@ import Colors from "./pages/Colors";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <ProductList />,
+    element: <Root />,
+    children: [
+      {
+        path: "/product-list",
+        element: <ProductList />,
+      },
+      {
+        path: "/categories",
+        element: <Categories />,
+      },
+      {
+        path: "/colors",
+        element: <Colors />,
+      },
+    ],
   },
+
   {
     path: "/login",
     element: <Login />,
-  },
-  {
-    path: "/categories",
-    element: <Categories />,
-  },
-  {
-    path: "/colors",
-    element: <Colors />,
   },
 ]);
 
