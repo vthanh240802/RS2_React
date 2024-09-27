@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import Button from "@mui/material/Button";
 
 const Login = () => {
   const auth = useSelector((state: any) => state.auth);
@@ -9,7 +10,9 @@ const Login = () => {
   }
   return (
     <div>
-      <h2>Login</h2>
+      <h2>
+        <Button variant="contained">Login</Button>
+      </h2>
     </div>
   );
 };
