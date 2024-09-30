@@ -5,14 +5,11 @@ import { validateForm } from "../util/validation";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { LOGIN } from "../store/action";
 import { Navigate, useNavigate } from "react-router-dom";
 import { login as handleLogin } from "../store/reducers/authReducer";
 import { AppDispatch } from "../store/";
 
 const Login = () => {
-  const [email, setEmail] = useState(""); // controlled component
-  const [password, setPassword] = useState(""); // asynchronous  (batch update)
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const auth = useSelector((state: any) => state.auth);
@@ -44,17 +41,6 @@ const Login = () => {
     }
   }, []); // [] didmount
 
-  const handleChangeData = useCallback(
-    (value: string, type: string) => {
-      if (type === "password") {
-        setPassword(value);
-      } else {
-        setEmail(value);
-      }
-    },
-    [setPassword]
-  );
-
   if (auth.isLoggedIn) {
     return <Navigate to="/" replace={true} />;
   }
@@ -74,18 +60,12 @@ const Login = () => {
       >
         <Input
           label="email"
-          value={email}
-          onChange={handleChangeData} // create new arrow function
           ref={(element) => (inputRefs.current.email = element)}
           error={errorMsgs.email}
-          // ref={emailRef}
         />
         <Input
           label="Password"
           type="password"
-          value={password}
-          onChange={handleChangeData}
-          // ref={passwordRef}
           ref={(element) => (inputRefs.current.password = element)}
           error={errorMsgs.password}
         />

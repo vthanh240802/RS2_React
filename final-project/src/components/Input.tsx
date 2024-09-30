@@ -6,21 +6,13 @@ type Props = {
   label: string;
   type?: string;
   value?: string;
-  onChange?: (value: string, type: string) => void;
   error?: string;
 };
 const Input = forwardRef<HTMLInputElement, Props>(
-  (
-    { label, type = "text", value = "", onChange = () => {}, error = "" },
-    ref
-  ) => {
-    const [currentValue, setCurrentValue] = useState(value);
-    console.log("render " + label);
+  ({ label, type = "text", value = "", error = "" }, ref) => {
     return (
       <TextField
         label={label}
-        defaultValue={currentValue}
-        onChange={(e) => setCurrentValue(e.target.value)}
         error={!!error}
         helperText={error}
         type={type}

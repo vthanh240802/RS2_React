@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import ColorLensOutlinedIcon from "@mui/icons-material/ColorLensOutlined";
@@ -12,13 +12,15 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { StyleIcon } from "../StyleIcon";
+import { StyleIcon } from "./styles";
 
 const Nav = () => {
   return (
-    <Box sx={{ width: 200, backgroundColor: "#f4f4f4", height: "100vh", p: 2 }}>
+    <Box
+      sx={{ width: "200px", backgroundColor: "#f4f4f4", height: "100vh", p: 2 }}
+    >
       <List>
-        <ListItem component={Link} to="/products">
+        <ListItem component={Link} to="">
           <Inventory2OutlinedIcon style={StyleIcon} />
           <ListItemText primary="Products" />
         </ListItem>

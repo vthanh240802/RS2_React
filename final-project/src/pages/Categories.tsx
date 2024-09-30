@@ -1,10 +1,11 @@
+import { Box } from "@mui/material";
 import React from "react";
 
 const Categories = () => {
   return (
-    <div>
+    <Box sx={{ marginLeft: "300px" }}>
       <h2>Categories</h2>
-    </div>
+    </Box>
   );
 };
 
