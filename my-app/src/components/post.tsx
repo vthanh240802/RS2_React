@@ -42,15 +42,15 @@ const Post = ({ post, editingField, handleEdit }: Props) => {
     []
   );
 
-  const hanleSave = useCallback(() => {
-    dispatch({
-      type: EDIT_POST,
-      changingInput,
-      postId: post.id,
-      userId: post.userId,
-    });
-    // setEdingField(null);
-  }, [dispatch, changingInput, post.id, setEdingField, post.userId]);
+  // const hanleSave = useCallback(() => {
+  //   dispatch({
+  //     type: EDIT_POST,
+  //     changingInput,
+  //     postId: post.id,
+  //     userId: post.userId,
+  //   });
+  //   setEdingField(null);
+  // }, [dispatch, changingInput, post.id, setEdingField, post.userId]);
   return (
     <div>
       <Link to={"post/" + post.id}>
@@ -64,7 +64,7 @@ const Post = ({ post, editingField, handleEdit }: Props) => {
               value={changingInput[editingField]}
               onChange={(e) => handleChangeInput(e, "body")}
             />
-            <button onClick={() => hanleSave()}>Save</button>
+            {/* <button onClick={() => hanleSave()}>Save</button> */}
           </>
         ) : (
           <p onDoubleClick={() => handleEdit(post, "body")}>{post.body}</p>
@@ -77,7 +77,7 @@ const Post = ({ post, editingField, handleEdit }: Props) => {
             value={changingInput[editingField]}
             onChange={(e) => handleChangeInput(e, "author")}
           />
-          <button onClick={() => hanleSave()}>Save</button>
+          {/* <button onClick={() => hanleSave()}>Save</button> */}
         </>
       ) : (
         post.name && (

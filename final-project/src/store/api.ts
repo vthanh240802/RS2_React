@@ -6,7 +6,11 @@ export async function fetchJson(url: string) {
   return jsonData;
 }
 
-export async function postJson(url: string, body: any, method: "PUT" | "POST") {
+export async function postJson(
+  url: string,
+  body: any,
+  method: "PUT" | "POST" | "PATCH"
+) {
   const response = await fetch(url, {
     method: method || "POST",
     body: JSON.stringify(body),

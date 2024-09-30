@@ -116,18 +116,3 @@ const Login = () => {
 
 export default Login;
 
-// challenge 10:
-/**
- * Complete the login form
- * applied useRef form
- * validate form:
- * 1. username is required
- * 2. password is required + length >= 8
- * Display the errors on the form if any
- */
-
-// Challenge 11.2
-/**
- * 1. Apply material UI for Login Form
- * 2. Handle login behaviors
- */

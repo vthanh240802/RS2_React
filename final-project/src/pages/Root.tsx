@@ -1,10 +1,13 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import Header from "../components/layout/header";
+import Nav from "../components/layout/nav";
+import { Outlet } from "react-router-dom";
 
 const Root = () => {
   return (
     <div>
-      <Link to="/">List Product</Link>
+      <Header />
+      <Nav />
       <Outlet />
     </div>
   );

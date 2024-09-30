@@ -10,11 +10,15 @@ import Colors from "./pages/Colors";
 
 const router = createBrowserRouter([
   {
+    path: "/login",
+    element: <Login />,
+  },
+  {
     path: "/",
     element: <Root />,
     children: [
       {
-        path: "/product-list",
+        path: "/products",
         element: <ProductList />,
       },
       {
@@ -26,11 +30,6 @@ const router = createBrowserRouter([
         element: <Colors />,
       },
     ],
-  },
-
-  {
-    path: "/login",
-    element: <Login />,
   },
 ]);
 

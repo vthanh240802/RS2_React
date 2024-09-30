@@ -6,7 +6,7 @@ type Props = {
   label: string;
   type?: string;
   value?: string;
-  onChange?: (value: string, type: string) => void; //
+  onChange?: (value: string, type: string) => void;
   error?: string;
 };
 const Input = forwardRef<HTMLInputElement, Props>(
