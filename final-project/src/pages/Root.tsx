@@ -4,10 +4,29 @@ import Nav from "../components/Nav";
 
 const Root = () => {
   return (
-    <div style={{ width: "100%" }}>
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
       <Header />
-      <Nav />
-      <Outlet />
+      <div style={{ display: "flex", flexGrow: 1 }}>
+        <Nav />
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            // alignItems: "center",
+            padding: "20px",
+          }}
+        >
+          <Outlet />
+        </div>
+      </div>
     </div>
   );
 };

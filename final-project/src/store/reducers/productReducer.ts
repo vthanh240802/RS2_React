@@ -1,80 +1,57 @@
-/** @format */
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { fetchJson } from "../api";
 
-import {
-  createAsyncThunk,
-  createSlice,
-  CaseReducer,
-  PayloadAction,
-  PayloadActionCreator,
-} from "@reduxjs/toolkit";
-import {
-  ProductState,
-  ProductModel,
-  ProductDataObject,
-} from "../../types/products";
-import { Action } from "redux";
-import { fetchData } from "../../util/fetchData";
-// import { TypedActionCreator } from 'react-redux'
+interface Product {
+  id: number;
+  name: string;
+  available: number;
+  sold: number;
+  categoryId: number;
+  colorIds: number[];
+  price: number;
+}
 
-export const fetchListProducts = createAsyncThunk(
-  "products/fetchListProducts",
-  async () => {
-    try {
-      const productsResponse = await fetchData("products");
-      return {
-        products: productsResponse,
-        error: null,
-      };
-    } catch (error) {
-      return { error };
-    }
-  }
-);
+const BASE_URL = "http://localhost:5000";
 
-type ActionType = Action<string> & {
-  productId: ProductModel["id"];
-  changingInput: {
-    body: string;
-    name: string;
-  };
-};
+export const product = createAsyncThunk("products", async () => {
+  const productInfo = await fetchJson(BASE_URL + "/products");
+  return productInfo;
+});
+
+interface ProductState {
+  entities: Record<number, Product>;
+  ids: number[];
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+}
 
 const initialState: ProductState = {
+  entities: {},
   ids: [],
-  data: {},
-  loading: "idle", // 'idle | 'loading' | 'succeed' | 'failed'
-  error: "",
+  status: "idle",
+  error: null,
 };
 
-const productsSlice = createSlice({
+const productSlice = createSlice({
   name: "products",
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchListProducts.pending, (state, action) => {
-        state.loading = "loading";
-      })
-      .addCase(fetchListProducts.fulfilled, (state, action) => {
-        const products = action.payload?.products || [];
-        if (!products.length) return;
-        const postObj: ProductDataObject = {};
-        const ids = products.reduce(
-          (allIds: Array<ProductModel["id"]>, post: ProductModel) => {
-            if (!state.data[post.id]) {
-              allIds.push(post.id);
-            }
-            postObj[post.id] = post;
-            return allIds;
-          },
-          []
-        );
-        state.data = { ...state.data, ...postObj };
-        state.ids = [...state.ids, ...ids];
-        state.error = action.payload?.error as string;
-        state.loading = "succeed";
+  extraReducers(builder) {
+    builder.addCase(product.pending, (state) => {
+      state.status = "loading";
+    });
+    builder.addCase(product.fulfilled, (state, action) => {
+      state.status = "succeeded";
+      const products: Product[] = action.payload;
+      state.ids = products.map((product) => product.id);
+      products.forEach((product) => {
+        state.entities[product.id] = product;
       });
+    });
+    builder.addCase(product.rejected, (state, action) => {
+      state.status = "failed";
+    });
   },
 });
 
-export const productsReducer = productsSlice.reducer;
+export const productReducer = productSlice.reducer;

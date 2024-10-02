@@ -1,9 +1,19 @@
 export async function fetchJson(url: string) {
-  const data = await fetch(url, {
-    method: "GET",
-  });
-  const jsonData = await data.json();
-  return jsonData;
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    }
+
+    const jsonData = await response.json();
+    return jsonData;
+  } catch (error) {
+    console.error("Failed to fetch data", error);
+    throw error;
+  }
 }
 
 export async function postJson(

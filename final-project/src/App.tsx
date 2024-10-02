@@ -4,7 +4,7 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
 import Root from "./pages/Root";
-import ProductList from "./pages/ProductList";
+import ProductList from "./pages/Products";
 import Categories from "./pages/Categories";
 import Colors from "./pages/Colors";
 
