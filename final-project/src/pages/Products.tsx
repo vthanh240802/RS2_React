@@ -72,15 +72,15 @@ const Products = () => {
 
   const totalProducts = productIds.length;
   const totalAvailable = productIds.reduce(
-    (acc: number, id: string) => acc + (products[id].available || 0),
+    (index: number, id: string) => index + (products[id].available || 0),
     0
   );
   const totalSold = productIds.reduce(
-    (acc: number, id: string) => acc + (products[id].sold || 0),
+    (index: number, id: string) => index + (products[id].sold || 0),
     0
   );
   const revenue = productIds.reduce(
-    (acc: number, id: string) => acc + (products[id].price || 0),
+    (index: number, id: string) => index + (products[id].price || 0),
     0
   );
 
