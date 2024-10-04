@@ -16,7 +16,7 @@ export async function fetchJson(url: string) {
   }
 }
 
-export async function postJson(
+export async function updateJson(
   url: string,
   body: any,
   method: "PUT" | "POST" | "PATCH"

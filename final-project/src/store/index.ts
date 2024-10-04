@@ -4,7 +4,7 @@ import storage from "redux-persist/lib/storage";
 import { thunk } from "redux-thunk";
 import { authReducer } from "./reducers/authReducer";
 import { productReducer } from "./reducers/productReducer";
-import { categoryReducer } from "./reducers/categoriesReducer";
+import { categoryReducer } from "./reducers/categoryReducer";
 import { colorReducer } from "./reducers/colorReducer";
 
 const persistConfig = {

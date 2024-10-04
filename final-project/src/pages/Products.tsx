@@ -9,18 +9,25 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store";
 import { product } from "../store/reducers/productReducer";
-import { category } from "../store/reducers/categoriesReducer"; // Import the category reducer
-import { color } from "../store/reducers/colorReducer"; // Import the color reducer
+import { category } from "../store/reducers/categoryReducer"; // Import the category reducer
+import { color } from "../store/reducers/colorReducer";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
 import ProductModel from "../Model/ProductModel";
+import { deleteJson } from "../store/api";
 import { styled } from "@mui/material/styles";
+import { StyleTableHead } from "../components/styles";
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
   width: "auto",
@@ -30,11 +37,16 @@ const DemoPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: "#f6f6f6",
   border: "none",
   borderRadius: "5px",
+  fontWeight: "600",
 }));
 
 const Products = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState<any>(null);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<number | null>(null);
+
   const {
     entities: products = {},
     ids: productIds = [],
@@ -49,6 +61,8 @@ const Products = () => {
   React.useEffect(() => {
     if (status === "idle") {
       dispatch(product());
+      dispatch(category());
+      dispatch(color());
     }
   }, [status, dispatch]);
 
@@ -84,16 +98,52 @@ const Products = () => {
     0
   );
 
-  const handleOpen = () => setOpen(true);
+  const handleOpenAdd = () => {
+    setCurrentProduct(null);
+    setOpen(true);
+  };
+
   const handleClose = () => setOpen(false);
+
   const handleAddProduct = (product: any) => {
     console.log("New Product:", product);
+  };
+
+  const handleOpenEdit = (product: any) => {
+    setCurrentProduct(product);
+    setOpen(true);
+  };
+
+  const handleOpenDeleteConfirm = (id: number) => {
+    setProductToDelete(id);
+    setOpenConfirm(true);
+  };
+
+  const handleCloseDeleteConfirm = () => {
+    setOpenConfirm(false);
+    setProductToDelete(null);
+  };
+
+  const BASE_URL = "http://localhost:5000";
+
+  const handleDeleteProduct = async () => {
+    if (productToDelete !== null) {
+      try {
+        await deleteJson(
+          `${BASE_URL}/products/${productToDelete}`,
+          productToDelete.toString()
+        );
+        dispatch(product());
+      } catch (error) {
+        console.error("Failed to delete product", error);
+      }
+    }
   };
 
   return (
     <>
       <TableContainer>
-        <Box sx={{ marginBottom: "20px" }}>
+        <Box sx={{ marginBottom: "20px", display: "flex" }}>
           <Stack direction="row" spacing={2}>
             <DemoPaper variant="outlined">Total: {totalProducts}</DemoPaper>
             <DemoPaper variant="outlined">
@@ -101,37 +151,32 @@ const Products = () => {
             </DemoPaper>
             <DemoPaper variant="outlined">Sold: {totalSold}</DemoPaper>
             <DemoPaper variant="outlined">Revenue: {revenue}</DemoPaper>
-            <Box>
-              <Button
-                variant="outlined"
-                disableElevation
-                color="success"
-                type="submit"
-                startIcon={<LibraryAddOutlinedIcon />}
-                onClick={handleOpen}
-              >
-                ADD
-              </Button>
-            </Box>
           </Stack>
+          <Box>
+            <Button
+              variant="outlined"
+              disableElevation
+              color="success"
+              type="submit"
+              startIcon={<LibraryAddOutlinedIcon />}
+              onClick={handleOpenAdd}
+              sx={{ height: 60, marginLeft: "10px" }}
+            >
+              ADD
+            </Button>
+          </Box>
         </Box>
         <Table>
           <TableHead>
-            <TableRow
-              sx={{
-                backgroundColor: "#1976d3",
-                color: "#6e3e3e",
-                fontWeight: "bold",
-              }}
-            >
-              <TableCell>No</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Available</TableCell>
-              <TableCell>Sold</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Colors</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Action</TableCell>
+            <TableRow>
+              <TableCell style={StyleTableHead}>No</TableCell>
+              <TableCell style={StyleTableHead}>Name</TableCell>
+              <TableCell style={StyleTableHead}>Available</TableCell>
+              <TableCell style={StyleTableHead}>Sold</TableCell>
+              <TableCell style={StyleTableHead}>Category</TableCell>
+              <TableCell style={StyleTableHead}>Colors</TableCell>
+              <TableCell style={StyleTableHead}>Price</TableCell>
+              <TableCell style={StyleTableHead}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -162,6 +207,7 @@ const Products = () => {
                       type="submit"
                       startIcon={<EditIcon />}
                       sx={{ marginRight: "10px" }}
+                      onClick={() => handleOpenEdit(products[id])}
                     >
                       Edit
                     </Button>
@@ -171,6 +217,7 @@ const Products = () => {
                       disableElevation
                       type="submit"
                       startIcon={<DeleteIcon />}
+                      onClick={() => handleOpenDeleteConfirm(products[id].id)}
                     >
                       Delete
                     </Button>
@@ -181,10 +228,29 @@ const Products = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Dialog open={openConfirm} onClose={handleCloseDeleteConfirm}>
+        <DialogTitle id="alert-dialog-title">{"Delete Product"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc muốn xóa không ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteConfirm} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteProduct} color="error" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <ProductModel
         open={open}
         onClose={handleClose}
         onAddProduct={handleAddProduct}
+        product={currentProduct}
       />
     </>
   );

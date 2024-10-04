@@ -16,6 +16,7 @@ import { AppDispatch } from "../store";
 import { color } from "../store/reducers/colorReducer";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import { StyleTableHead } from "../components/styles";
 
 const Color = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,9 +41,9 @@ const Color = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>No</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell style={StyleTableHead}>No</TableCell>
+              <TableCell style={StyleTableHead}>Name</TableCell>
+              <TableCell style={StyleTableHead}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

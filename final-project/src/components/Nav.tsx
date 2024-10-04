@@ -12,7 +12,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { StyleIcon } from "./styles";
+import { StyleIcon, StyleNav } from "./styles";
 
 const Nav = () => {
   return (
@@ -20,15 +20,15 @@ const Nav = () => {
       sx={{ width: "200px", backgroundColor: "#f4f4f4", height: "100vh", p: 2 }}
     >
       <List>
-        <ListItem component={Link} to="">
+        <ListItem component={Link} to="" style={StyleNav}>
           <Inventory2OutlinedIcon style={StyleIcon} />
           <ListItemText primary="Products" />
         </ListItem>
-        <ListItem component={Link} to="/categories">
+        <ListItem component={Link} to="/categories" style={StyleNav}>
           <CategoryOutlinedIcon style={StyleIcon} />
           <ListItemText primary="Categories" />
         </ListItem>
-        <ListItem component={Link} to="/colors">
+        <ListItem component={Link} to="/colors" style={StyleNav}>
           <ColorLensOutlinedIcon style={StyleIcon} />
           <ListItemText primary="Colors" />
         </ListItem>

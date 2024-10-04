@@ -13,9 +13,10 @@ import {
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store";
-import { category } from "../store/reducers/categoriesReducer";
+import { category } from "../store/reducers/categoryReducer";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import { StyleTableHead } from "../components/styles";
 
 const Categories = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -42,9 +43,9 @@ const Categories = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>No</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Action</TableCell>
+              <TableCell style={StyleTableHead}>No</TableCell>
+              <TableCell style={StyleTableHead}>Name</TableCell>
+              <TableCell style={StyleTableHead}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
