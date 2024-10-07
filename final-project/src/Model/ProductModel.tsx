@@ -44,25 +44,14 @@ const ProductModel: React.FC<ProductModelProps> = ({
   const { entities: colors = {} } = useSelector((state: any) => state.color);
 
   useEffect(() => {
-    if (product) {
-      setNewProduct({
-        name: product.name || "",
-        available: product.available || 0,
-        sold: product.sold || 0,
-        categoryId: product.categoryId || 0,
-        colorIds: product.colorIds || [],
-        price: product.price || 0,
-      });
-    } else {
-      setNewProduct({
-        name: "",
-        available: 0,
-        sold: 0,
-        categoryId: 0,
-        colorIds: [],
-        price: 0,
-      });
-    }
+    setNewProduct({
+      name: product?.name || "",
+      available: product?.available || 0,
+      sold: product?.sold || 0,
+      categoryId: product?.categoryId || 0,
+      colorIds: product?.colorIds || [],
+      price: product?.price || 0,
+    });
   }, [product]);
 
   const handleSubmit = () => {

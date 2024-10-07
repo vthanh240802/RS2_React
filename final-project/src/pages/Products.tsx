@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Alert,
 } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +33,7 @@ import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
 import ProductModel from "../Model/ProductModel";
 import { styled } from "@mui/material/styles";
 import { StyleTableHead } from "../components/styles";
+import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
   width: "auto",
@@ -47,9 +49,21 @@ const DemoPaper = styled(Paper)(({ theme }) => ({
 const Products = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<any>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [productToDelete, setProductToDelete] = useState<number | null>(null);
+
+  const handleCloseSnackBar = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpenSnackBar(false);
+  };
 
   const {
     entities: products = {},
@@ -122,7 +136,7 @@ const Products = () => {
       dispatch(updateProduct({ ...currentProduct, ...product }))
         .unwrap()
         .then(() => {
-          console.log("Sản phẩm đã được cập nhật thành công!");
+          setOpenSnackBar(true);
           setOpen(false);
         })
         .catch((error) => {
@@ -175,6 +189,15 @@ const Products = () => {
   return (
     <>
       <TableContainer>
+        <Snackbar
+          open={openSnackBar}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackBar}
+        >
+          <Alert severity="success" variant="filled" sx={{ width: "100%" }}>
+            Cập nhật product thành công
+          </Alert>
+        </Snackbar>
         <Box sx={{ marginBottom: "20px", display: "flex" }}>
           <Stack direction="row" spacing={2}>
             <DemoPaper variant="outlined">Total: {totalProducts}</DemoPaper>
