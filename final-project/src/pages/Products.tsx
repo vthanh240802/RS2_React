@@ -15,17 +15,21 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store";
-import { product } from "../store/reducers/productReducer";
-import { category } from "../store/reducers/categoryReducer"; // Import the category reducer
+import {
+  addProduct,
+  deleteProduct,
+  fetchProducts,
+  updateProduct,
+} from "../store/reducers/productReducer";
+import { category } from "../store/reducers/categoryReducer";
 import { color } from "../store/reducers/colorReducer";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
 import ProductModel from "../Model/ProductModel";
-import { deleteJson } from "../store/api";
 import { styled } from "@mui/material/styles";
 import { StyleTableHead } from "../components/styles";
 
@@ -60,7 +64,7 @@ const Products = () => {
 
   React.useEffect(() => {
     if (status === "idle") {
-      dispatch(product());
+      dispatch(fetchProducts());
       dispatch(category());
       dispatch(color());
     }
@@ -84,19 +88,26 @@ const Products = () => {
     }
   };
 
-  const totalProducts = productIds.length;
-  const totalAvailable = productIds.reduce(
-    (index: number, id: string) => index + (products[id].available || 0),
-    0
-  );
-  const totalSold = productIds.reduce(
-    (index: number, id: string) => index + (products[id].sold || 0),
-    0
-  );
-  const revenue = productIds.reduce(
-    (index: number, id: string) => index + (products[id].price || 0),
-    0
-  );
+  const totalProducts = useMemo(() => productIds.length, [productIds]);
+  const totalAvailable = useMemo(() => {
+    return productIds.reduce(
+      (index: number, id: string) => index + (products[id].available || 0),
+      0
+    );
+  }, [productIds, products]);
+
+  const totalSold = useMemo(() => {
+    return productIds.reduce(
+      (index: number, id: string) => index + (products[id].sold || 0),
+      0
+    );
+  }, [productIds, products]);
+  const revenue = useMemo(() => {
+    return productIds.reduce(
+      (index: number, id: string) => index + (products[id].price || 0),
+      0
+    );
+  }, [productIds, products]);
 
   const handleOpenAdd = () => {
     setCurrentProduct(null);
@@ -106,7 +117,29 @@ const Products = () => {
   const handleClose = () => setOpen(false);
 
   const handleAddProduct = (product: any) => {
-    console.log("New Product:", product);
+    if (currentProduct) {
+      // Cập nhật sản phẩm hiện tại
+      dispatch(updateProduct({ ...currentProduct, ...product }))
+        .unwrap()
+        .then(() => {
+          console.log("Sản phẩm đã được cập nhật thành công!");
+          setOpen(false); // Đóng dialog sau khi cập nhật thành công
+        })
+        .catch((error) => {
+          console.error("Lỗi khi cập nhật sản phẩm:", error);
+        });
+    } else {
+      // Thêm sản phẩm mới
+      dispatch(addProduct(product))
+        .unwrap()
+        .then(() => {
+          console.log("Sản phẩm mới đã được thêm thành công!");
+          setOpen(false); // Đóng dialog sau khi thêm thành công
+        })
+        .catch((error) => {
+          console.error("Lỗi khi thêm sản phẩm:", error);
+        });
+    }
   };
 
   const handleOpenEdit = (product: any) => {
@@ -114,29 +147,28 @@ const Products = () => {
     setOpen(true);
   };
 
-  const handleOpenDeleteConfirm = (id: number) => {
-    setProductToDelete(id);
-    setOpenConfirm(true);
-  };
-
   const handleCloseDeleteConfirm = () => {
     setOpenConfirm(false);
     setProductToDelete(null);
   };
 
-  const BASE_URL = "http://localhost:5000";
+  const handleOpenDeleteConfirm = (id: number) => {
+    setProductToDelete(id);
+    setOpenConfirm(true);
+  };
 
-  const handleDeleteProduct = async () => {
-    if (productToDelete !== null) {
-      try {
-        await deleteJson(
-          `${BASE_URL}/products/${productToDelete}`,
-          productToDelete.toString()
-        );
-        dispatch(product());
-      } catch (error) {
-        console.error("Failed to delete product", error);
-      }
+  const handleDeleteProduct = () => {
+    if (productToDelete) {
+      dispatch(deleteProduct(productToDelete))
+        .unwrap()
+        .then(() => {
+          console.log("Sản phẩm đã được xóa thành công!");
+          setOpenConfirm(false); // Đóng dialog sau khi xóa thành công
+        })
+        .catch((error) => {
+          console.error("Lỗi khi xóa sản phẩm:", error);
+        });
+      setProductToDelete(null); // Reset productToDelete sau khi xóa
     }
   };
 

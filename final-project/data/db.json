@@ -67,30 +67,6 @@
         4
       ],
       "price": 450000
-    },
-    {
-      "id": "3",
-      "name": "Backpack Elsa",
-      "available": 100,
-      "sold": 7,
-      "categoryId": 2,
-      "colorIds": [
-        4,
-        6
-      ],
-      "price": 370000
-    },
-    {
-      "id": "5",
-      "name": "Hand Bag with metal strap",
-      "available": 5,
-      "sold": 1,
-      "categoryId": 2,
-      "colorIds": [
-        3,
-        2
-      ],
-      "price": 260000
     }
   ]
 }
