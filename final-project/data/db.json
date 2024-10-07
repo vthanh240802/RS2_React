@@ -48,13 +48,13 @@
       "id": "1",
       "name": "T-shirt long sleeve update",
       "available": 23,
-      "sold": 10,
-      "categoryId": 1,
+      "sold": 101,
+      "categoryId": 2,
       "colorIds": [
         1,
-        4
+        2
       ],
-      "price": 500000
+      "price": 5000003
     },
     {
       "id": "2",
@@ -67,6 +67,19 @@
         4
       ],
       "price": 450000
+    },
+    {
+      "id": "1728293686756",
+      "name": "Test1",
+      "available": 10,
+      "sold": 11,
+      "categoryId": 1,
+      "colorIds": [
+        1,
+        2,
+        3
+      ],
+      "price": 100001
     }
   ]
 }

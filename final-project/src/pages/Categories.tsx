@@ -13,10 +13,11 @@ import {
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../store";
-import { category } from "../store/reducers/categoryReducer";
+import { fetchCategories } from "../store/reducers/categoryReducer";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { StyleTableHead } from "../components/styles";
+import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
 
 const Categories = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -31,7 +32,7 @@ const Categories = () => {
     console.log(status);
 
     if (status === "idle") {
-      dispatch(category());
+      dispatch(fetchCategories());
     }
   }, [status, dispatch]);
 
@@ -40,6 +41,19 @@ const Categories = () => {
   return (
     <>
       <TableContainer sx={{}}>
+        <Box sx={{ marginBottom: "20px", display: "flex" }}>
+          <Button
+            variant="outlined"
+            disableElevation
+            color="success"
+            type="submit"
+            startIcon={<LibraryAddOutlinedIcon />}
+            // onClick={handleOpenAdd}
+            sx={{ height: 60, marginLeft: "10px" }}
+          >
+            ADD
+          </Button>
+        </Box>
         <Table>
           <TableHead>
             <TableRow>

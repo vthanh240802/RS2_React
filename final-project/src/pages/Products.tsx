@@ -24,7 +24,7 @@ import {
   fetchProducts,
   updateProduct,
 } from "../store/reducers/productReducer";
-import { category } from "../store/reducers/categoryReducer";
+import { fetchCategories } from "../store/reducers/categoryReducer";
 import { color } from "../store/reducers/colorReducer";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -65,7 +65,7 @@ const Products = () => {
   React.useEffect(() => {
     if (status === "idle") {
       dispatch(fetchProducts());
-      dispatch(category());
+      dispatch(fetchCategories());
       dispatch(color());
     }
   }, [status, dispatch]);
@@ -123,7 +123,7 @@ const Products = () => {
         .unwrap()
         .then(() => {
           console.log("Sản phẩm đã được cập nhật thành công!");
-          setOpen(false); // Đóng dialog sau khi cập nhật thành công
+          setOpen(false);
         })
         .catch((error) => {
           console.error("Lỗi khi cập nhật sản phẩm:", error);
@@ -134,7 +134,7 @@ const Products = () => {
         .unwrap()
         .then(() => {
           console.log("Sản phẩm mới đã được thêm thành công!");
-          setOpen(false); // Đóng dialog sau khi thêm thành công
+          setOpen(false);
         })
         .catch((error) => {
           console.error("Lỗi khi thêm sản phẩm:", error);
@@ -163,12 +163,12 @@ const Products = () => {
         .unwrap()
         .then(() => {
           console.log("Sản phẩm đã được xóa thành công!");
-          setOpenConfirm(false); // Đóng dialog sau khi xóa thành công
+          setOpenConfirm(false);
         })
         .catch((error) => {
           console.error("Lỗi khi xóa sản phẩm:", error);
         });
-      setProductToDelete(null); // Reset productToDelete sau khi xóa
+      setProductToDelete(null);
     }
   };
 

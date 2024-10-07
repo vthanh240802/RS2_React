@@ -3,6 +3,30 @@ import { deleteJson, fetchJson, updateJson } from "../api";
 
 const BASE_URL = "http://localhost:5000";
 
+interface Product {
+  id: string;
+  name: string;
+  available: number;
+  sold: number;
+  categoryId: number;
+  colorIds: number[];
+  price: number;
+}
+
+interface ProductState {
+  entities: Record<string, Product>;
+  ids: string[];
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+}
+
+const initialState: ProductState = {
+  entities: {},
+  ids: [],
+  status: "idle",
+  error: null,
+};
+
 export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async () => {
@@ -49,30 +73,6 @@ export const deleteProduct = createAsyncThunk(
     return productId;
   }
 );
-
-interface Product {
-  id: string;
-  name: string;
-  available: number;
-  sold: number;
-  categoryId: number;
-  colorIds: number[];
-  price: number;
-}
-
-interface ProductState {
-  entities: Record<string, Product>;
-  ids: string[];
-  status: "idle" | "loading" | "succeeded" | "failed";
-  error: string | null;
-}
-
-const initialState: ProductState = {
-  entities: {},
-  ids: [],
-  status: "idle",
-  error: null,
-};
 
 const productSlice = createSlice({
   name: "products",
