@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Dialog,
@@ -7,6 +8,8 @@ import {
   DialogContentText,
   DialogTitle,
   Paper,
+  Snackbar,
+  SnackbarCloseReason,
   Table,
   TableBody,
   TableCell,
@@ -29,13 +32,15 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import { StyleTableHead } from "../components/styles";
 import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
-import CategoryModel from "../Model/CategoryModel";
+import CategoryModel from "../components/CategoryModel";
 
 const Categories = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
   const [currentCategory, setCurrentCategory] = useState<any>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarMessage, setSnackBarMessage] = useState<string>("");
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
   const [editedCategory, setEditedCategory] = useState<{
     [key: string]: string;
@@ -56,6 +61,16 @@ const Categories = () => {
     }
   }, [status, dispatch]);
 
+  const handleCloseSnackBar = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
+
   const handleOpenAdd = () => {
     setCurrentCategory(null);
     setOpen(true);
@@ -65,11 +80,12 @@ const Categories = () => {
     dispatch(addCategory(category))
       .unwrap()
       .then(() => {
-        console.log("Category mới đã được thêm thành công!");
+        setSnackBarMessage("Thêm Category thành công");
+        setOpenSnackBar(true);
         setOpen(false);
       })
       .catch((error) => {
-        console.error("Lỗi khi thêm Category:", error);
+        setSnackBarMessage("Thêm Category thất bại");
       });
   };
   const handleClose = () => setOpen(false);
@@ -80,8 +96,17 @@ const Categories = () => {
   };
 
   const handleSave = (id: string) => {
-    dispatch(updateCategory({ id, name: editedCategory[id] }));
-    setIsEditing({ ...isEditing, [id]: false });
+    dispatch(updateCategory({ id, name: editedCategory[id] }))
+      .unwrap()
+      .then(() => {
+        setSnackBarMessage("Cập nhật Category thành công");
+        setOpenSnackBar(true);
+        setIsEditing({ ...isEditing, [id]: false });
+      })
+      .catch((error) => {
+        setSnackBarMessage("Cập nhật Category thất bại");
+        setOpenSnackBar(true);
+      });
   };
 
   const handleNameChange = (id: string, value: string) => {
@@ -116,6 +141,15 @@ const Categories = () => {
   return (
     <>
       <TableContainer sx={{}}>
+        <Snackbar
+          open={openSnackBar}
+          autoHideDuration={3000}
+          onClose={handleCloseSnackBar}
+        >
+          <Alert severity="success" variant="filled" sx={{ width: "100%" }}>
+            {snackBarMessage}
+          </Alert>
+        </Snackbar>
         <Box sx={{ marginBottom: "20px", display: "flex" }}>
           <Button
             variant="outlined"

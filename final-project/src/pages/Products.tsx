@@ -26,11 +26,11 @@ import {
   updateProduct,
 } from "../store/reducers/productReducer";
 import { fetchCategories } from "../store/reducers/categoryReducer";
-import { color } from "../store/reducers/colorReducer";
+import { fetchColor } from "../store/reducers/colorReducer";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
-import ProductModel from "../Model/ProductModel";
+import ProductModel from "../components/ProductModel";
 import { styled } from "@mui/material/styles";
 import { StyleTableHead } from "../components/styles";
 import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
@@ -50,6 +50,7 @@ const Products = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
   const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarMessage, setSnackBarMessage] = useState<string>("");
   const [currentProduct, setCurrentProduct] = useState<any>(null);
   const [openConfirm, setOpenConfirm] = useState(false);
   const [productToDelete, setProductToDelete] = useState<number | null>(null);
@@ -61,7 +62,6 @@ const Products = () => {
     if (reason === "clickaway") {
       return;
     }
-
     setOpenSnackBar(false);
   };
 
@@ -80,7 +80,7 @@ const Products = () => {
     if (status === "idle") {
       dispatch(fetchProducts());
       dispatch(fetchCategories());
-      dispatch(color());
+      dispatch(fetchColor());
     }
   }, [status, dispatch]);
 
@@ -136,22 +136,24 @@ const Products = () => {
       dispatch(updateProduct({ ...currentProduct, ...product }))
         .unwrap()
         .then(() => {
+          setSnackBarMessage("Cập nhật product thành công");
           setOpenSnackBar(true);
           setOpen(false);
         })
         .catch((error) => {
-          console.error("Lỗi khi cập nhật sản phẩm:", error);
+          setSnackBarMessage("Cập nhật product thất bại");
         });
     } else {
       // Thêm sản phẩm mới
       dispatch(addProduct(product))
         .unwrap()
         .then(() => {
-          console.log("Sản phẩm mới đã được thêm thành công!");
+          setSnackBarMessage("Thêm product thành công");
+          setOpenSnackBar(true);
           setOpen(false);
         })
         .catch((error) => {
-          console.error("Lỗi khi thêm sản phẩm:", error);
+          setSnackBarMessage("Thêm product thất bại");
         });
     }
   };
@@ -195,7 +197,7 @@ const Products = () => {
           onClose={handleCloseSnackBar}
         >
           <Alert severity="success" variant="filled" sx={{ width: "100%" }}>
-            Cập nhật product thành công
+            {snackBarMessage}
           </Alert>
         </Snackbar>
         <Box sx={{ marginBottom: "20px", display: "flex" }}>

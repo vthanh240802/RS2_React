@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import Root from "./pages/Root";
 import ProductList from "./pages/Products";
 import Categories from "./pages/Categories";
-import Colors from "./pages/Colors";
+import Colors from "./pages/Color";
 
 const router = createBrowserRouter([
   {

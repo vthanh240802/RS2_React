@@ -19,8 +19,7 @@ const Root = () => {
           style={{
             flex: 1,
             display: "flex",
-            justifyContent: "center",
-            // alignItems: "center",
+            // justifyContent: "center",
             padding: "20px",
           }}
         >
