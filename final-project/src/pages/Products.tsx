@@ -32,7 +32,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
 import ProductModel from "../components/ProductModel";
 import { styled } from "@mui/material/styles";
-import { StyleTableHead } from "../components/styles";
+import { StyleTableCell, StyleTableRow } from "../components/styles";
 import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar";
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
@@ -79,9 +79,9 @@ const Products = () => {
   React.useEffect(() => {
     if (status === "idle") {
       dispatch(fetchProducts());
-      dispatch(fetchCategories());
-      dispatch(fetchColor());
     }
+    dispatch(fetchCategories());
+    dispatch(fetchColor());
   }, [status, dispatch]);
 
   const getCategoryNameById = (id: string) => {
@@ -91,36 +91,56 @@ const Products = () => {
 
   const getColorNamesById = (colorIds: number[]) => {
     if (colorIds.length === 0) {
-      return "No colors available";
+      return "";
     } else if (colorIds.length === 1) {
       const colorName = colors[colorIds[0]]?.name;
       return colorName ? colorName : "Unknown color";
     } else {
-      return colorIds
-        .map((colorId) => colors[colorId]?.name || "Unknown")
-        .join(", ");
+      const colorNames = colorIds
+        .map((colorId) => colors[colorId]?.name || null)
+        .filter((name) => name !== null);
+      if (colorNames.length === 0) {
+        return "";
+      }
+      return colorNames.join(", ");
     }
   };
 
-  const totalProducts = useMemo(() => productIds.length, [productIds]);
+  const totalProducts = useMemo(() => {
+    return productIds
+      .reduce(
+        (index: number, id: string) =>
+          index + (products[id].available * products[id].sold || 0),
+        0
+      )
+      .toLocaleString();
+  }, [productIds, products]);
+
   const totalAvailable = useMemo(() => {
-    return productIds.reduce(
-      (index: number, id: string) => index + (products[id].available || 0),
-      0
-    );
+    return productIds
+      .reduce(
+        (index: number, id: string) => index + (products[id].available || 0),
+        0
+      )
+      .toLocaleString();
   }, [productIds, products]);
 
   const totalSold = useMemo(() => {
-    return productIds.reduce(
-      (index: number, id: string) => index + (products[id].sold || 0),
-      0
-    );
+    return productIds
+      .reduce(
+        (index: number, id: string) => index + (products[id].sold || 0),
+        0
+      )
+      .toLocaleString();
   }, [productIds, products]);
   const revenue = useMemo(() => {
-    return productIds.reduce(
-      (index: number, id: string) => index + (products[id].price || 0),
-      0
-    );
+    return productIds
+      .reduce(
+        (index: number, id: string) =>
+          index + (products[id].price * products[id].sold || 0),
+        0
+      )
+      .toLocaleString();
   }, [productIds, products]);
 
   const handleOpenAdd = () => {
@@ -142,6 +162,7 @@ const Products = () => {
         })
         .catch((error) => {
           setSnackBarMessage("Cập nhật product thất bại");
+          setOpenSnackBar(true);
         });
     } else {
       // Thêm sản phẩm mới
@@ -154,6 +175,7 @@ const Products = () => {
         })
         .catch((error) => {
           setSnackBarMessage("Thêm product thất bại");
+          setOpenSnackBar(true);
         });
     }
   };
@@ -178,16 +200,28 @@ const Products = () => {
       dispatch(deleteProduct(productToDelete))
         .unwrap()
         .then(() => {
-          console.log("Sản phẩm đã được xóa thành công!");
+          setSnackBarMessage("Xóa Product thành công");
+          setOpenSnackBar(true);
           setOpenConfirm(false);
         })
         .catch((error) => {
-          console.error("Lỗi khi xóa sản phẩm:", error);
+          setSnackBarMessage("Xóa Product thất bại");
+          setOpenSnackBar(true);
         });
       setProductToDelete(null);
     }
   };
 
+  const headers = [
+    { text: "No" },
+    { text: "Name" },
+    { text: "Available" },
+    { text: "Sold" },
+    { text: "Category" },
+    { text: "Colors" },
+    { text: "Price" },
+    { text: "ACtion" },
+  ];
   return (
     <>
       <TableContainer>
@@ -225,60 +259,54 @@ const Products = () => {
         </Box>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell style={StyleTableHead}>No</TableCell>
-              <TableCell style={StyleTableHead}>Name</TableCell>
-              <TableCell style={StyleTableHead}>Available</TableCell>
-              <TableCell style={StyleTableHead}>Sold</TableCell>
-              <TableCell style={StyleTableHead}>Category</TableCell>
-              <TableCell style={StyleTableHead}>Colors</TableCell>
-              <TableCell style={StyleTableHead}>Price</TableCell>
-              <TableCell style={StyleTableHead}>Action</TableCell>
+            <TableRow style={StyleTableRow}>
+              {headers.map((header) => (
+                <TableCell key={header.text}>{header.text}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {productIds.map((id: string, index: number) => (
-              <TableRow
-                key={id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {index + 1}
+              <TableRow key={id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell style={StyleTableCell}>
+                  {products[id].name}
                 </TableCell>
-                <TableCell>{products[id].name}</TableCell>
-                <TableCell>{products[id].available}</TableCell>
-                <TableCell>{products[id].sold}</TableCell>
-                <TableCell>
+                <TableCell style={StyleTableCell}>
+                  {products[id].available}
+                </TableCell>
+                <TableCell style={StyleTableCell}>
+                  {products[id].sold}
+                </TableCell>
+                <TableCell style={StyleTableCell}>
                   {getCategoryNameById(products[id].categoryId)}
                 </TableCell>
-                <TableCell>
+                <TableCell style={StyleTableCell}>
                   {getColorNamesById(products[id].colorIds)}
                 </TableCell>
-                <TableCell>{products[id].price}</TableCell>
+                <TableCell style={StyleTableCell}>
+                  {products[id].price.toLocaleString()}
+                </TableCell>
                 <TableCell>
-                  <div>
-                    <Button
-                      variant="outlined"
-                      disableElevation
-                      color="success"
-                      type="submit"
-                      startIcon={<EditIcon />}
-                      sx={{ marginRight: "10px" }}
-                      onClick={() => handleOpenEdit(products[id])}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      disableElevation
-                      type="submit"
-                      startIcon={<DeleteIcon />}
-                      onClick={() => handleOpenDeleteConfirm(products[id].id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outlined"
+                    disableElevation
+                    color="success"
+                    startIcon={<EditIcon />}
+                    sx={{ marginRight: "10px" }}
+                    onClick={() => handleOpenEdit(products[id])}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    disableElevation
+                    startIcon={<DeleteIcon />}
+                    onClick={() => handleOpenDeleteConfirm(products[id].id)}
+                  >
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

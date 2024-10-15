@@ -15,6 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
+import { validateProductForm } from "../util/validation";
 
 interface ProductModelProps {
   open: boolean;
@@ -43,6 +44,15 @@ const ProductModel: React.FC<ProductModelProps> = ({
   );
   const { entities: colors = {} } = useSelector((state: any) => state.color);
 
+  const [errors, setErrors] = useState({
+    name: "",
+    available: "",
+    sold: "",
+    price: "",
+    categoryId: "",
+    colorIds: "",
+  });
+
   useEffect(() => {
     setNewProduct({
       name: product?.name || "",
@@ -55,7 +65,22 @@ const ProductModel: React.FC<ProductModelProps> = ({
   }, [product]);
 
   const handleSubmit = () => {
-    onAddProduct(newProduct);
+    const validationError = validateProductForm(newProduct);
+
+    if (validationError) {
+      // Cập nhật các lỗi tương ứng cho từng field
+      setErrors({
+        ...errors,
+        name: validationError.includes("name") ? validationError : "",
+        available: validationError.includes("Available") ? validationError : "",
+        sold: validationError.includes("Sold") ? validationError : "",
+        price: validationError.includes("Price") ? validationError : "",
+        categoryId: validationError.includes("Category") ? validationError : "",
+        colorIds: validationError.includes("color") ? validationError : "",
+      });
+      return;
+    }
+    onAddProduct(newProduct); // Nếu không có lỗi, thêm sản phẩm
     onClose();
   };
 
@@ -64,6 +89,7 @@ const ProductModel: React.FC<ProductModelProps> = ({
       ...newProduct,
       categoryId: parseInt(e.target.value as string),
     });
+    setErrors({ ...errors, categoryId: "" }); // Clear lỗi nếu người dùng chọn
   };
 
   const handleColorToggle = (colorId: number) => {
@@ -79,11 +105,32 @@ const ProductModel: React.FC<ProductModelProps> = ({
         colorIds: [...currentColors, colorId],
       });
     }
+    setErrors({ ...errors, colorIds: "" }); // Clear lỗi nếu người dùng chọn
+  };
+
+  const handleClose = () => {
+    setNewProduct({
+      name: product?.name || "",
+      available: product?.available || 0,
+      sold: product?.sold || 0,
+      categoryId: product?.categoryId || 0,
+      colorIds: product?.colorIds || [],
+      price: product?.price || 0,
+    });
+    setErrors({
+      name: "",
+      available: "",
+      sold: "",
+      price: "",
+      categoryId: "",
+      colorIds: "",
+    });
+    onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
-      <DialogTitle>{product ? "Edit Product" : "Add Product"}</DialogTitle>
+      <DialogTitle>{product ? "EDIT PRODUCT" : "ADD PRODUCT"}</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
@@ -97,6 +144,8 @@ const ProductModel: React.FC<ProductModelProps> = ({
           onChange={(e) =>
             setNewProduct({ ...newProduct, name: e.target.value })
           }
+          error={!!errors.name} // Trạng thái lỗi
+          helperText={errors.name} // Thông báo lỗi
           sx={{ marginTop: "10px", marginBottom: "10px" }}
         />
 
@@ -114,6 +163,8 @@ const ProductModel: React.FC<ProductModelProps> = ({
               available: parseInt(e.target.value),
             })
           }
+          error={!!errors.available}
+          helperText={errors.available}
           sx={{ marginTop: "10px", marginBottom: "10px" }}
         />
 
@@ -128,6 +179,8 @@ const ProductModel: React.FC<ProductModelProps> = ({
           onChange={(e) =>
             setNewProduct({ ...newProduct, sold: parseInt(e.target.value) })
           }
+          error={!!errors.sold}
+          helperText={errors.sold}
           sx={{ marginTop: "10px", marginBottom: "10px" }}
         />
 
@@ -142,11 +195,17 @@ const ProductModel: React.FC<ProductModelProps> = ({
           onChange={(e) =>
             setNewProduct({ ...newProduct, price: parseInt(e.target.value) })
           }
+          error={!!errors.price}
+          helperText={errors.price}
           sx={{ marginTop: "10px", marginBottom: "10px" }}
         />
 
         {/* Category Dropdown */}
-        <FormControl fullWidth sx={{ marginTop: "10px", marginBottom: "10px" }}>
+        <FormControl
+          fullWidth
+          sx={{ marginTop: "10px", marginBottom: "10px" }}
+          error={!!errors.categoryId}
+        >
           <InputLabel id="category-label">Category</InputLabel>
           <Select
             labelId="category-label"
@@ -160,6 +219,11 @@ const ProductModel: React.FC<ProductModelProps> = ({
               </MenuItem>
             ))}
           </Select>
+          {errors.categoryId && (
+            <Typography color="error" variant="body2">
+              {errors.categoryId}
+            </Typography>
+          )}
         </FormControl>
 
         {/* Colors Multi-select */}
@@ -188,10 +252,15 @@ const ProductModel: React.FC<ProductModelProps> = ({
               );
             })}
           </Box>
+          {errors.colorIds && (
+            <Typography color="error" variant="body2">
+              {errors.colorIds}
+            </Typography>
+          )}
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={handleSubmit}>Submit</Button>
       </DialogActions>
     </Dialog>

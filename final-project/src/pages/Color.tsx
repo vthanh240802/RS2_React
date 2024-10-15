@@ -24,6 +24,7 @@ import {
 } from "../store/reducers/colorReducer";
 import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
+import { validateColorForm } from "../util/validation";
 
 const Color = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -56,22 +57,36 @@ const Color = () => {
     setOpenSnackBar(false);
   };
 
-  const handleAdd = () => {
-    if (newColor.name.trim()) {
-      const colorWithId = { ...newColor, id: Date.now().toString() };
+  const [errors, setErrors] = useState({
+    name: "",
+  });
 
-      dispatch(addColor(colorWithId))
-        .unwrap()
-        .then(() => {
-          setSnackBarMessage("Thêm color thành công");
-          setOpenSnackBar(true);
-          setNewColor({ name: "" });
-        })
-        .catch((error) => {
-          setSnackBarMessage("Thêm color thất bại");
-          setOpenSnackBar(true);
-        });
+  const handleAdd = () => {
+    // Xác thực form
+    const validationError = validateColorForm(newColor); // Truyền `newColor` vào hàm validate
+
+    if (validationError) {
+      // Nếu có lỗi, cập nhật state errors
+      setErrors({
+        ...errors,
+        name: validationError.includes("name") ? validationError : "",
+      });
+      return;
     }
+
+    const colorWithId = { ...newColor, id: Date.now().toString() }; // Thêm color kèm id
+    dispatch(addColor(colorWithId))
+      .unwrap()
+      .then(() => {
+        setSnackBarMessage("Thêm color thành công");
+        setOpenSnackBar(true);
+        setNewColor({ name: "" });
+        setErrors({ name: "" }); // Reset lỗi sau khi thêm thành công
+      })
+      .catch(() => {
+        setSnackBarMessage("Thêm color thất bại");
+        setOpenSnackBar(true);
+      });
   };
 
   const handleCloseDeleteConfirm = () => {
@@ -142,6 +157,8 @@ const Color = () => {
               onChange={(e) =>
                 setNewColor({ ...newColor, name: e.target.value })
               }
+              error={!!errors.name}
+              helperText={errors.name}
               sx={{ marginRight: 2, marginLeft: 2 }}
             />
             <Button

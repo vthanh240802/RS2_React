@@ -15,6 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSelector } from "react-redux";
+import { validateCategoryForm } from "../util/validation";
 
 interface CategoryModelProps {
   open: boolean;
@@ -39,8 +40,38 @@ const CategoryModel: React.FC<CategoryModelProps> = ({
     });
   }, [category]);
 
+  const [errors, setErrors] = useState({
+    name: "",
+  });
+
+  useEffect(() => {
+    setNewCategory({
+      name: category?.name || "",
+    });
+  }, [category]);
+
   const handleSubmit = () => {
+    const validationError = validateCategoryForm(newCategory);
+
+    if (validationError) {
+      // Cập nhật các lỗi tương ứng cho từng field
+      setErrors({
+        ...errors,
+        name: validationError.includes("name") ? validationError : "",
+      });
+      return;
+    }
     onAddCategory(newCategory);
+    onClose();
+  };
+
+  const handleClose = () => {
+    setNewCategory({
+      name: category?.name || "",
+    });
+    setErrors({
+      name: "",
+    });
     onClose();
   };
 
@@ -60,11 +91,13 @@ const CategoryModel: React.FC<CategoryModelProps> = ({
           onChange={(e) =>
             setNewCategory({ ...newCategory, name: e.target.value })
           }
+          error={!!errors.name}
+          helperText={errors.name}
           sx={{ marginTop: "10px", marginBottom: "10px" }}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={handleSubmit}>Submit</Button>
       </DialogActions>
     </Dialog>

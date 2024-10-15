@@ -10,6 +10,7 @@ import { colorReducer } from "./reducers/colorReducer";
 const persistConfig = {
   key: "root",
   storage,
+  blacklist: ["product"],
 };
 
 const rootReducer = combineReducers({

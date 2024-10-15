@@ -9,18 +9,19 @@ const Root = () => {
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        minHeight: "100vh",
+        height: "100vh",
+        overflow: "hidden",
       }}
     >
       <Header />
-      <div style={{ display: "flex", flexGrow: 1 }}>
+      <div style={{ display: "flex", flexGrow: 1, overflow: "hidden" }}>
         <Nav />
         <div
           style={{
             flex: 1,
             display: "flex",
-            // justifyContent: "center",
             padding: "20px",
+            overflow: "auto",
           }}
         >
           <Outlet />

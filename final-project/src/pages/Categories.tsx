@@ -30,7 +30,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
-import { StyleTableHead } from "../components/styles";
+import { StyleTableCell, StyleTableRow } from "../components/styles";
 import LibraryAddOutlinedIcon from "@mui/icons-material/LibraryAddOutlined";
 import CategoryModel from "../components/CategoryModel";
 
@@ -128,7 +128,8 @@ const Categories = () => {
       dispatch(deleteCategory(categoryToDelete))
         .unwrap()
         .then(() => {
-          console.log("Category đã được xóa thành công!");
+          setSnackBarMessage("Xóa Category thành công");
+          setOpenSnackBar(true);
           setOpenConfirm(false);
         })
         .catch((error) => {
@@ -138,6 +139,7 @@ const Categories = () => {
     }
   };
 
+  const headers = [{ text: "No" }, { text: "Name" }, { text: "Action" }];
   return (
     <>
       <TableContainer sx={{}}>
@@ -165,10 +167,10 @@ const Categories = () => {
         </Box>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell style={StyleTableHead}>No</TableCell>
-              <TableCell style={StyleTableHead}>Name</TableCell>
-              <TableCell style={StyleTableHead}>Action</TableCell>
+            <TableRow style={StyleTableRow}>
+              {headers.map((header) => (
+                <TableCell key={header.text}>{header.text}</TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -177,22 +179,28 @@ const Categories = () => {
                 key={id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" style={StyleTableCell}>
                   {index + 1}
                 </TableCell>
 
-                <TableCell>
+                <TableCell style={StyleTableCell} sx={{ width: "20%" }}>
                   {isEditing[id] ? (
                     <TextField
                       value={editedCategory[id] || ""}
                       onChange={(e) => handleNameChange(id, e.target.value)}
+                      sx={{
+                        width: "100%",
+                        height: "1px",
+                        "& .MuiInputBase-input": {
+                          padding: "0px 12px",
+                        },
+                      }}
                     />
                   ) : (
                     categories[id].name
                   )}
                 </TableCell>
-
-                <TableCell>
+                <TableCell style={StyleTableCell}>
                   <div>
                     {isEditing[id] ? (
                       <Button

@@ -1,12 +1,26 @@
 import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectIsLoggedIn } from "./store/reducers/authReducer";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import Login from "./pages/Login";
 import Root from "./pages/Root";
 import ProductList from "./pages/Products";
 import Categories from "./pages/Categories";
 import Colors from "./pages/Color";
+
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
 
 const router = createBrowserRouter([
   {
@@ -14,7 +28,11 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    element: <Root />,
+    element: (
+      <ProtectedRoute>
+        <Root />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,

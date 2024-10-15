@@ -45,7 +45,16 @@ const Login = () => {
     return <Navigate to="/" replace={true} />;
   }
   return (
-    <div className="app">
+    <div
+      className="app"
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        backgroundColor: "#f5f5f5",
+      }}
+    >
       <Box
         component="form"
         onSubmit={handleSubmit}

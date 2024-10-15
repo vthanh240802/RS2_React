@@ -17,18 +17,21 @@ const initialState = {
   loading: "idle",
   error: "",
 };
+export const selectIsLoggedIn = (state: any) => state.auth.isLoggedIn;
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logout(state) {
+      state.isLoggedIn = false;
+    },
+  },
   extraReducers(builder) {
     builder.addCase(LOGIN, (state) => {
       state.isLoggedIn = true;
     });
     builder.addCase(login.fulfilled, (state, action: any) => {
-      console.log(action);
-
       const formUserInfo = action.meta.arg;
       const authInfo = action.payload;
 
@@ -48,4 +51,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { logout } = authSlice.actions;
 export const authReducer = authSlice.reducer;

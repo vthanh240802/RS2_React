@@ -8,8 +8,15 @@ export const StyleNav = {
   color: "black",
 };
 
-export const StyleTableHead = {
+export const StyleTableRow = {
   color: "black",
   fontWeight: "600",
   backgroundColor: "#ccc",
+};
+
+export const StyleTableCell = {
+  maxWidth: 150,
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
 };
